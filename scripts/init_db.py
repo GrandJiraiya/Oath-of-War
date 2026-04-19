@@ -5,8 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from db import Base, engine
+from oath_of_war.db import Base, engine
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
-    print("Database tables created.")
+    print('Database tables created.')
