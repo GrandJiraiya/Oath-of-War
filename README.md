@@ -1,13 +1,27 @@
-# Oath of War — Vercel + Turso Starter
+# Oath of War — Organized Flask Backend + Web Frontend
 
-This starter adds the **online persistence layer** for your game:
+This repository now has a cleaner structure so the backend and frontend are easier to maintain, run, and extend.
 
-- player registration / profile rows
-- shared top-5 leaderboard
-- cloud save slots
-- Flask API routes ready for Vercel
-- Turso-ready SQLAlchemy setup
-- SQLite fallback for local dev
+## Project structure
+
+```text
+.
+├── app.py                     # Root runtime entrypoint for Flask
+├── oath_of_war/
+│   ├── __init__.py            # Exposes `app` for Flask (`flask --app oath_of_war run`)
+│   ├── app.py                 # Flask app factory and API routes
+│   ├── config.py              # Environment + DB URL configuration
+│   ├── db.py                  # SQLAlchemy engine/session/base
+│   ├── models.py              # Player/Run/SaveSlot ORM models
+│   ├── repository.py          # Data-access and leaderboard/save logic
+│   └── web/
+│       ├── static/            # Frontend JS/CSS
+│       └── templates/         # Flask HTML templates
+├── scripts/
+│   └── init_db.py             # Local database bootstrap script
+├── schema.sql                 # SQL schema reference
+└── Idle-loot-dungeon/         # Legacy prototype kept for reference
+```
 
 ## Quick start locally
 
@@ -15,9 +29,15 @@ This starter adds the **online persistence layer** for your game:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
+cp .env.example .env  # if present
 python scripts/init_db.py
-python -m flask --app app run --host=0.0.0.0 --port=8000
+python -m flask --app oath_of_war run --host=0.0.0.0 --port=8000
+```
+
+Alternative entrypoint:
+
+```bash
+python app.py
 ```
 
 ## Environment variables
@@ -36,32 +56,12 @@ FLASK_SECRET_KEY=change-me
 DATABASE_URL=sqlite+libsql://YOUR_DB.turso.io/?authToken=YOUR_TOKEN&secure=true
 ```
 
-You can also use the legacy split variables:
+Legacy split variables are also supported:
 
 ```env
 TURSO_DATABASE_URL=libsql://YOUR_DB.turso.io
 TURSO_AUTH_TOKEN=YOUR_TOKEN
 ```
-
-## Turso setup
-
-Install the CLI, create the DB, and get your credentials:
-
-```bash
-turso db create oath-of-war
-turso db show --url oath-of-war
-turso db tokens create oath-of-war
-```
-
-Then put the resulting URL/token into your environment variables.
-
-## Vercel deploy
-
-1. Push this repo to GitHub.
-2. Import it into Vercel.
-3. Add the environment variables in Project Settings.
-4. Deploy.
-5. Add the custom subdomain `rpg.crashoutcrypto.xyz` to the Vercel project.
 
 ## API routes
 
@@ -73,13 +73,7 @@ Then put the resulting URL/token into your environment variables.
 - `POST /api/save-slot`
 - `GET /api/save-slot/<player_name>`
 
-## How to merge this into your existing game
+## Notes
 
-Keep your current combat/gameplay frontend and replace the browser-local storage calls with:
-
-- `POST /api/player/register` when the player enters a name
-- `POST /api/run/submit` after a run ends or when you want to update score progress
-- `POST /api/save-slot` for cloud saves
-- `GET /api/leaderboard` for the shared top 5
-
-This repo is intentionally focused on the online layer so it is easy to bolt onto the game logic you already built.
+- Root compatibility shims (`config.py`, `db.py`, `models.py`, `repository.py`) are still present, but main development should happen in `oath_of_war/`.
+- The `Idle-loot-dungeon/` folder is preserved as the older game prototype.
