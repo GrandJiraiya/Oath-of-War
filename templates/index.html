@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ app_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Vercel + Turso starter</p>
+          <h1>{{ app_name }}</h1>
+          <p class="subhead">This starter focuses on the online layer: player registration, shared top-five leaderboard, and cloud save slots.</p>
+        </div>
+      </header>
+
+      <section class="grid">
+        <section class="panel">
+          <h2>Register / Update Player</h2>
+          <label>Player name</label>
+          <input id="playerName" placeholder="Crash" />
+          <label>Preferred class</label>
+          <select id="preferredClass">
+            <option value="mage">Mage</option>
+            <option value="warrior">Warrior</option>
+            <option value="rogue">Rogue</option>
+          </select>
+          <button id="registerBtn">Register player</button>
+
+          <h3>Submit a test run</h3>
+          <div class="two-col">
+            <input id="runId" placeholder="run-001" />
+            <input id="score" type="number" placeholder="950" />
+            <input id="roomReached" type="number" placeholder="8" />
+            <input id="levelReached" type="number" placeholder="4" />
+            <input id="victories" type="number" placeholder="7" />
+            <input id="bossKills" type="number" placeholder="1" />
+          </div>
+          <button id="submitRunBtn">Submit run to leaderboard</button>
+        </section>
+
+        <section class="panel">
+          <h2>Cloud Save Slot</h2>
+          <textarea id="savePayload" rows="8">{
+  "room": 5,
+  "class": "mage",
+  "gold": 120,
+  "note": "Replace this with your real run payload"
+}</textarea>
+          <div class="actions">
+            <button id="saveSlotBtn">Save slot</button>
+            <button id="loadSlotBtn" class="ghost">Load slot</button>
+          </div>
+          <pre id="saveOutput">No save loaded.</pre>
+        </section>
+
+        <section class="panel">
+          <h2>Top 5 Leaderboard</h2>
+          <button id="refreshLeaderboardBtn" class="ghost">Refresh</button>
+          <ol id="leaderboard"></ol>
+        </section>
+      </section>
+
+      <section class="panel log-panel">
+        <h2>API log</h2>
+        <pre id="log"></pre>
+      </section>
+    </main>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
