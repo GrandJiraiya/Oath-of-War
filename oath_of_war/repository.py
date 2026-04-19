@@ -50,7 +50,6 @@ def submit_run(session: Session, payload: dict[str, Any]) -> dict[str, Any]:
     player.best_score = max(player.best_score, run.score)
     player.preferred_class = payload.get('class_key') or player.preferred_class
 
-    session.commit()
     return serialize_player(player)
 
 
@@ -62,7 +61,7 @@ def save_slot(session: Session, player_name: str, payload: dict[str, Any]) -> No
         session.add(slot)
     else:
         slot.payload_json = json.dumps(payload)
-    session.commit()
+    session.flush()
 
 
 def load_slot(session: Session, player_name: str) -> dict[str, Any] | None:
