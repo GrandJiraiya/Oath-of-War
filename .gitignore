@@ -3,4 +3,6 @@ __pycache__/
 .venv/
 .env
 local.db
+*.sqlite
+*.sqlite3
 .pytest_cache/
