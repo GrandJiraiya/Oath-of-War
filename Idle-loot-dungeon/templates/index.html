@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idle Loot Dungeon</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero-banner">
+        <div>
+          <p class="eyebrow">Browser Prototype</p>
+          <h1>Idle Loot Dungeon</h1>
+          <p class="subhead">Choose a class, auto-fight rooms, loot upgrades, and bully a boss every 5th floor.</p>
+        </div>
+        <div class="top-actions">
+          <button id="reset-run" class="ghost">Reset Run</button>
+        </div>
+      </header>
+
+      <section id="class-picker" class="panel class-picker">
+        <h2>Choose Your Class</h2>
+        <div class="class-grid" id="class-grid"></div>
+      </section>
+
+      <section id="game-board" class="game-grid hidden">
+        <aside class="panel stats-panel">
+          <h2>Hero</h2>
+          <div id="hero-stats"></div>
+          <div class="gear-block">
+            <h3>Gear</h3>
+            <div id="gear-list"></div>
+          </div>
+        </aside>
+
+        <section class="panel battle-panel">
+          <div class="battle-header">
+            <div>
+              <p class="eyebrow">Current Room</p>
+              <h2 id="room-title">Room 1</h2>
+            </div>
+            <div class="status-chip" id="status-chip">Ready</div>
+          </div>
+
+          <div class="enemy-card" id="enemy-card"></div>
+
+          <div class="action-row" id="battle-actions">
+            <button data-fight="attack">Attack</button>
+            <button data-fight="spell">Cast Spell</button>
+            <button data-fight="potion">Drink Potion</button>
+          </div>
+
+          <div class="action-row reward-row" id="reward-actions">
+            <button data-reward="gear">Random Gear</button>
+            <button data-reward="potion">Potion</button>
+            <button data-reward="heal">Heal 35%</button>
+            <button data-reward="mana">Mana Surge</button>
+          </div>
+
+          <div class="action-row reward-row" id="gear-actions">
+            <button data-gear="equip">Equip</button>
+            <button data-gear="sell">Sell</button>
+          </div>
+
+          <div class="log-panel">
+            <h3>Battle Log</h3>
+            <ul id="battle-log"></ul>
+          </div>
+        </section>
+
+        <aside class="panel side-panel">
+          <h2>Merchant</h2>
+          <p id="merchant-quote"></p>
+          <div class="action-stack">
+            <button data-shop="buy_potion">Buy Potion (25g)</button>
+            <button data-shop="buy_gear">Buy Random Gear (60g)</button>
+            <button data-shop="leave" class="ghost">Leave Merchant Alone</button>
+          </div>
+
+          <div class="helper-card" id="reward-preview">
+            <h3>Loot Preview</h3>
+            <div id="reward-preview-body">No loose treasure right now.</div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
