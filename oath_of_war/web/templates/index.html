@@ -7,53 +7,34 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
-    <main class="shell">
-      <header class="hero">
+    <main class="app-shell">
+      <header class="hero-banner panel">
         <div>
-          <p class="eyebrow">Vercel + Turso starter</p>
+          <p class="eyebrow">Playable web build + cloud persistence</p>
           <h1>{{ app_name }}</h1>
-          <p class="subhead">This starter focuses on the online layer: player registration, shared top-five leaderboard, and cloud save slots.</p>
+          <p class="subhead">Fight through rooms, claim rewards, visit the merchant, and persist your run + leaderboard stats to the backend.</p>
         </div>
       </header>
 
-      <section class="grid">
+      <section class="top-grid">
         <section class="panel">
-          <h2>Register / Update Player</h2>
-          <label>Player name</label>
-          <input id="playerName" placeholder="Crash" />
-          <label>Preferred class</label>
+          <h2>Profile</h2>
+          <label for="playerName">Player name</label>
+          <input id="playerName" placeholder="Crash" maxlength="40" />
+
+          <label for="preferredClass">Preferred class</label>
           <select id="preferredClass">
-            <option value="mage">Mage</option>
             <option value="warrior">Warrior</option>
+            <option value="mage">Mage</option>
             <option value="rogue">Rogue</option>
           </select>
-          <button id="registerBtn">Register player</button>
 
-          <h3>Submit a test run</h3>
-          <div class="two-col">
-            <input id="runId" placeholder="run-001" />
-            <input id="score" type="number" placeholder="950" />
-            <input id="roomReached" type="number" placeholder="8" />
-            <input id="levelReached" type="number" placeholder="4" />
-            <input id="victories" type="number" placeholder="7" />
-            <input id="bossKills" type="number" placeholder="1" />
+          <div class="action-row">
+            <button id="registerBtn">Register</button>
+            <button id="startRunBtn">Start New Run</button>
+            <button id="loadSaveBtn" class="ghost">Load Save</button>
+            <button id="saveNowBtn" class="ghost">Save Now</button>
           </div>
-          <button id="submitRunBtn">Submit run to leaderboard</button>
-        </section>
-
-        <section class="panel">
-          <h2>Cloud Save Slot</h2>
-          <textarea id="savePayload" rows="8">{
-  "room": 5,
-  "class": "mage",
-  "gold": 120,
-  "note": "Replace this with your real run payload"
-}</textarea>
-          <div class="actions">
-            <button id="saveSlotBtn">Save slot</button>
-            <button id="loadSlotBtn" class="ghost">Load slot</button>
-          </div>
-          <pre id="saveOutput">No save loaded.</pre>
         </section>
 
         <section class="panel">
@@ -63,11 +44,68 @@
         </section>
       </section>
 
+      <section id="game-board" class="game-grid hidden">
+        <aside class="panel stats-panel">
+          <h2>Hero</h2>
+          <div id="hero-stats"></div>
+          <div class="helper-card">
+            <h3>Run Snapshot</h3>
+            <pre id="run-snapshot"></pre>
+          </div>
+        </aside>
+
+        <section class="panel battle-panel">
+          <div class="battle-header">
+            <div>
+              <p class="eyebrow">Current Room</p>
+              <h2 id="room-title">Room 1</h2>
+            </div>
+            <div class="status-chip" id="status-chip">ready</div>
+          </div>
+
+          <div class="enemy-card" id="enemy-card"></div>
+
+          <div class="action-row" id="battle-actions">
+            <button data-fight="attack">Attack</button>
+            <button data-fight="spell">Cast Spell</button>
+            <button data-fight="potion">Potion</button>
+          </div>
+
+          <div class="action-row" id="reward-actions">
+            <button data-reward="heal">Heal +35%</button>
+            <button data-reward="gold">Bonus Gold</button>
+            <button data-reward="power">Power Boost</button>
+          </div>
+
+          <div class="log-panel">
+            <h3>Battle Log</h3>
+            <ul id="battle-log"></ul>
+          </div>
+        </section>
+
+        <aside class="panel side-panel">
+          <h2>Merchant</h2>
+          <p id="merchant-quote">No offers yet.</p>
+          <div class="action-stack">
+            <button data-shop="potion">Buy Potion (25g)</button>
+            <button data-shop="attack">Sharpen Blade +2 atk (35g)</button>
+            <button data-shop="armor">Patch Armor +2 def (35g)</button>
+          </div>
+
+          <div class="helper-card">
+            <h3>Actions</h3>
+            <button id="nextRoomBtn">Advance to Next Room</button>
+            <button id="resetRunBtn" class="ghost">Abandon Run</button>
+          </div>
+        </aside>
+      </section>
+
       <section class="panel log-panel">
-        <h2>API log</h2>
+        <h2>API Log</h2>
         <pre id="log"></pre>
       </section>
     </main>
+
     <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>
 </html>
