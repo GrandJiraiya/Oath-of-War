@@ -16,6 +16,28 @@ function log(message) {
   out.textContent = typeof message === 'string' ? message : JSON.stringify(message, null, 2);
 }
 
+function requirePlayerName() {
+  const playerName = $('playerName').value.trim();
+  if (!playerName) throw new Error('Player name is required.');
+  return playerName;
+}
+
+function safeParseJSON(value) {
+  try {
+    return JSON.parse(value || '{}');
+  } catch {
+    throw new Error('Save payload must be valid JSON.');
+  }
+}
+
+async function runAction(action) {
+  try {
+    await action();
+  } catch (err) {
+    log(err.message || 'Unexpected error');
+  }
+}
+
 async function refreshLeaderboard() {
   const data = await api('/api/leaderboard');
   const root = $('leaderboard');
@@ -29,48 +51,56 @@ async function refreshLeaderboard() {
 }
 
 $('registerBtn').addEventListener('click', async () => {
-  const payload = {
-    player_name: $('playerName').value.trim(),
-    preferred_class: $('preferredClass').value,
-  };
-  const data = await api('/api/player/register', 'POST', payload);
-  log(data);
+  await runAction(async () => {
+    const payload = {
+      player_name: requirePlayerName(),
+      preferred_class: $('preferredClass').value,
+    };
+    const data = await api('/api/player/register', 'POST', payload);
+    log(data);
+  });
 });
 
 $('submitRunBtn').addEventListener('click', async () => {
-  const payload = {
-    run_id: $('runId').value.trim() || `run-${Date.now()}`,
-    player_name: $('playerName').value.trim(),
-    class_key: $('preferredClass').value,
-    room_reached: Number($('roomReached').value || 1),
-    level_reached: Number($('levelReached').value || 1),
-    victories: Number($('victories').value || 0),
-    boss_kills: Number($('bossKills').value || 0),
-    gold: 0,
-    score: Number($('score').value || 0),
-    run_over: true,
-    is_new_run: true,
-  };
-  const data = await api('/api/run/submit', 'POST', payload);
-  log(data);
-  await refreshLeaderboard();
+  await runAction(async () => {
+    const payload = {
+      run_id: $('runId').value.trim() || `run-${Date.now()}`,
+      player_name: requirePlayerName(),
+      class_key: $('preferredClass').value,
+      room_reached: Number($('roomReached').value || 1),
+      level_reached: Number($('levelReached').value || 1),
+      victories: Number($('victories').value || 0),
+      boss_kills: Number($('bossKills').value || 0),
+      gold: 0,
+      score: Number($('score').value || 0),
+      run_over: true,
+      is_new_run: true,
+    };
+    const data = await api('/api/run/submit', 'POST', payload);
+    log(data);
+    await refreshLeaderboard();
+  });
 });
 
 $('saveSlotBtn').addEventListener('click', async () => {
-  const payload = JSON.parse($('savePayload').value || '{}');
-  const data = await api('/api/save-slot', 'POST', {
-    player_name: $('playerName').value.trim(),
-    payload,
+  await runAction(async () => {
+    const payload = safeParseJSON($('savePayload').value);
+    const data = await api('/api/save-slot', 'POST', {
+      player_name: requirePlayerName(),
+      payload,
+    });
+    log(data);
   });
-  log(data);
 });
 
 $('loadSlotBtn').addEventListener('click', async () => {
-  const data = await api(`/api/save-slot/${encodeURIComponent($('playerName').value.trim())}`);
-  $('saveOutput').textContent = JSON.stringify(data.payload, null, 2);
-  log(data);
+  await runAction(async () => {
+    const data = await api(`/api/save-slot/${encodeURIComponent(requirePlayerName())}`);
+    $('saveOutput').textContent = JSON.stringify(data.payload, null, 2);
+    log(data);
+  });
 });
 
-$('refreshLeaderboardBtn').addEventListener('click', refreshLeaderboard);
+$('refreshLeaderboardBtn').addEventListener('click', () => runAction(refreshLeaderboard));
 
 refreshLeaderboard().catch((err) => log(err.message));
