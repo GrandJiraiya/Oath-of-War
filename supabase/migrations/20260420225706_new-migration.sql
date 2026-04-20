@@ -1,0 +1,1 @@
+-- New migration scaffold created via `supabase migration new new-migration`
