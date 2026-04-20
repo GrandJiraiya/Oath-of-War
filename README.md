@@ -1,6 +1,6 @@
-# Oath of War — Organized Flask Backend + Web Frontend
+# Oath of War — Flask Backend + Web Frontend
 
-This repository now has a cleaner structure so the backend and frontend are easier to maintain, run, and extend.
+This repository contains the game API backend, database models, and bundled web UI.
 
 ## Project structure
 
@@ -20,7 +20,7 @@ This repository now has a cleaner structure so the backend and frontend are easi
 ├── scripts/
 │   └── init_db.py             # Local database bootstrap script
 ├── schema.sql                 # SQL schema reference
-└── Idle-loot-dungeon/         # Legacy prototype kept for reference
+└── supabase/migrations/        # Supabase SQL migration history
 ```
 
 ## Quick start locally
@@ -76,4 +76,3 @@ TURSO_AUTH_TOKEN=YOUR_TOKEN
 ## Notes
 
 - Root compatibility shims (`config.py`, `db.py`, `models.py`, `repository.py`) are still present, but main development should happen in `oath_of_war/`.
-- The `Idle-loot-dungeon/` folder is preserved as the older game prototype.
