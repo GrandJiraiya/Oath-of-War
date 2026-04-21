@@ -173,6 +173,15 @@ After redeploy, verify these endpoints in order:
 
 Use this sequence to smoke-test the deployed API:
 
+Or run the bundled script:
+
+```bash
+./scripts/smoke_api.sh
+# optional override
+BASE_URL="https://your-deployment.example.com" ./scripts/smoke_api.sh
+```
+
+
 ```bash
 BASE_URL="https://rpg.crashoutcrypto.xyz"
 
