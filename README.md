@@ -49,18 +49,17 @@ FLASK_SECRET_KEY=change-me
 DATABASE_URL=sqlite:///local.db
 ```
 
-### Turso on Vercel
+### Supabase on Vercel
 
 ```env
 FLASK_SECRET_KEY=change-me
-DATABASE_URL=sqlite+libsql://YOUR_DB.turso.io/?authToken=YOUR_TOKEN&secure=true
+DATABASE_URL=postgresql://YOUR_TRANSACTION_POOLER_CONNECTION_STRING
 ```
 
-Legacy split variables are also supported:
+Optional equivalent variable name:
 
 ```env
-TURSO_DATABASE_URL=libsql://YOUR_DB.turso.io
-TURSO_AUTH_TOKEN=YOUR_TOKEN
+SUPABASE_DB_URL=postgresql://YOUR_TRANSACTION_POOLER_CONNECTION_STRING
 ```
 
 ## API routes
