@@ -49,18 +49,114 @@ FLASK_SECRET_KEY=change-me
 DATABASE_URL=sqlite:///local.db
 ```
 
-### Supabase on Vercel
+### Supabase on Vercel (recommended)
+
+Use the **Supabase transaction pooler** URL (port `6543`) for Vercel/serverless deployments:
 
 ```env
-FLASK_SECRET_KEY=change-me
-DATABASE_URL=postgresql://YOUR_TRANSACTION_POOLER_CONNECTION_STRING
+FLASK_SECRET_KEY=your-long-random-secret
+DATABASE_URL=postgresql://postgres.<project-ref>:[PASSWORD]@aws-0-<region>.pooler.supabase.com:6543/postgres
 ```
 
-Optional equivalent variable name:
+You can also use `SUPABASE_DB_URL` instead of `DATABASE_URL` (only one is required).
 
-```env
-SUPABASE_DB_URL=postgresql://YOUR_TRANSACTION_POOLER_CONNECTION_STRING
+## Vercel deployment checklist (Supabase)
+
+1. Open your Vercel project.
+2. Go to **Settings → Environment Variables**.
+3. Add:
+   - `FLASK_SECRET_KEY`
+   - `DATABASE_URL` (or `SUPABASE_DB_URL`)
+4. Paste your Supabase **transaction pooler** URL for the database variable.
+5. Apply variable scope to:
+   - **Production** (for `rpg.crashoutcrypto.xyz`)
+   - **Preview** (recommended, so preview branches also connect correctly)
+6. Remove old Turso variables if still present:
+   - `TURSO_DATABASE_URL`
+   - `TURSO_AUTH_TOKEN`
+7. Redeploy after variable changes (Vercel env var updates only apply to new deployments).
+
+## Supabase sanity-test sequence
+
+After redeploy, verify these endpoints in order:
+
+1) **App health**
+
+- `GET /api/health`
+- Expected: `200` and `{"ok": true, "app": "Oath of War"}`
+
+2) **Register player**
+
+- `POST /api/player/register`
+- Body:
+
+```json
+{
+  "player_name": "Crash",
+  "preferred_class": "rogue"
+}
 ```
+
+- Expected: `200` and player JSON.
+
+3) **Submit run**
+
+- `POST /api/run/submit`
+- Body:
+
+```json
+{
+  "run_id": "test-run-001",
+  "player_name": "Crash",
+  "class_key": "rogue",
+  "room_reached": 3,
+  "level_reached": 2,
+  "victories": 2,
+  "boss_kills": 0,
+  "gold": 45,
+  "score": 420,
+  "run_over": false,
+  "is_new_run": true
+}
+```
+
+- Expected: `200`, updated player, and leaderboard array.
+
+4) **Check leaderboard**
+
+- `GET /api/leaderboard`
+- Expected: submitted run appears in entries.
+
+5) **Save cloud slot**
+
+- `POST /api/save-slot`
+- Body:
+
+```json
+{
+  "player_name": "Crash",
+  "payload": {
+    "run_id": "test-run-001",
+    "player": {
+      "player_name": "Crash",
+      "class_key": "rogue",
+      "room": 3
+    }
+  }
+}
+```
+
+- Expected: `200` and `{ "ok": true }`.
+
+6) **Load cloud slot**
+
+- `GET /api/save-slot/Crash`
+- Expected: `200` and saved payload returned.
+
+7) **Load player profile**
+
+- `GET /api/player/Crash`
+- Expected: `200` and player profile plus save slot.
 
 ## API routes
 
@@ -74,4 +170,6 @@ SUPABASE_DB_URL=postgresql://YOUR_TRANSACTION_POOLER_CONNECTION_STRING
 
 ## Notes
 
+- SQLAlchemy is configured with `NullPool` for non-SQLite DBs to match transaction-pooler/serverless usage.
+- Supabase transaction mode does not support prepared statements; keep DB session usage straightforward.
 - Root compatibility shims (`config.py`, `db.py`, `models.py`, `repository.py`) are still present, but main development should happen in `oath_of_war/`.
