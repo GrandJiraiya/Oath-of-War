@@ -18,5 +18,5 @@ def build_database_url() -> str:
     return f"sqlite:///{BASE_DIR / 'local.db'}"
 class Settings:
     APP_NAME = "Oath of War"
-    SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
+    SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "1e5a7e26aa783fbac6d0814a8c31552639420e0b97a77155d330e89db3d5b97e")
     DATABASE_URL = build_database_url()
